@@ -21,16 +21,37 @@ from scipy.linalg import eigh
 
 from skimage.transform import resize
 
+# def preprocess(array):
+#     """
+#     Normalizes the supplied array and reshapes it into the appropriate format.
+#     """
+
+#     array = array.astype("float32") / 255.0
+#     tmpArr = np.zeros([len(array), 224, 224])
+#     for i in range(len(array)):
+#         tmpArr[i] = (resize(array[i],(224, 224)))
+
+#     return tmpArr
+
 def preprocess(array):
     """
     Normalizes the supplied array and reshapes it into the appropriate format.
     """
 
     array = array.astype("float32") / 255.0
+    # tmpArr = np.zeros([len(array), 224, 224])
+    # for i in range(len(array)):
+    #     tmpArr[i] = (resize(array[i],(224, 224)))
+
+    return array
+
+
+def resizeArr(array):
+    # array = array.astype("float32")
     tmpArr = np.zeros([len(array), 112, 112])
     for i in range(len(array)):
         tmpArr[i] = (resize(array[i],(112, 112)))
-
+    
     return tmpArr
 
 (x_train, y_train), (x_test, y_test)=tf.keras.datasets.mnist.load_data()
@@ -44,6 +65,29 @@ y_test = y_train[-2000:]
 
 x_train = preprocess(x_train)
 x_test = preprocess(x_test)
+
+X_train = x_train.reshape(-1, 784)
+X_test = x_test.reshape(-1, 784)
+
+pca = PCA(196)
+X_train_pca = pca.fit_transform(X_train)
+X_test_pca = pca.transform(X_test)
+
+# std_scaler = StandardScaler()
+# X_train_pca = std_scaler.fit_transform(X_train_pca)
+# X_test_pca = std_scaler.transform(X_test_pca)
+# x_train = std_scaler.fit_transform(X_train)
+# x_test = std_scaler.transform(X_test)
+
+
+# x_train = X_train_pca.reshape(X_train_pca.shape[0], 112, 112)
+# x_test = X_test_pca.reshape(X_test_pca.shape[0], 112, 112)
+x_train = resizeArr(X_train_pca)
+x_test = resizeArr(X_test_pca)
+
+
+# print(x_train.shape)
+# quit()
 
 x_train = tf.expand_dims(x_train, axis=3, name=None)
 x_test = tf.expand_dims(x_test, axis=3, name=None)
