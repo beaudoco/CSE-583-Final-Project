@@ -1,23 +1,23 @@
 import tensorflow as tf
 import matplotlib.pyplot as plt
 from tensorflow.keras import datasets, layers, models, losses
-from tensorflow.keras import backend as K
-from tensorflow.keras.layers import AveragePooling2D, MaxPooling2D, Dropout
-from tensorflow.keras.layers import Input,InputLayer, Dense, Activation, ZeroPadding2D, BatchNormalization, Flatten, Conv2D
-from tensorflow.keras.models import Sequential,Model
-from tensorflow.keras.optimizers import SGD
-from tensorflow.keras.callbacks import ModelCheckpoint,LearningRateScheduler
+# from tensorflow.keras import backend as K
+# from tensorflow.keras.layers import AveragePooling2D, MaxPooling2D, Dropout
+# from tensorflow.keras.layers import Input,InputLayer, Dense, Activation, ZeroPadding2D, BatchNormalization, Flatten, Conv2D
+# from tensorflow.keras.models import Sequential,Model
+# from tensorflow.keras.optimizers import SGD
+# from tensorflow.keras.callbacks import ModelCheckpoint,LearningRateScheduler
 
-from keras.utils.np_utils import to_categorical
+# from keras.utils.np_utils import to_categorical
 
-import pandas as pd
-from sklearn.decomposition import PCA
-from sklearn.preprocessing import StandardScaler
-from sklearn.preprocessing import LabelEncoder 
-from sklearn.preprocessing import StandardScaler
-# import keras
+# import pandas as pd
+# from sklearn.decomposition import PCA
+# from sklearn.preprocessing import StandardScaler
+# from sklearn.preprocessing import LabelEncoder 
+# from sklearn.preprocessing import StandardScaler
+# # import keras
 import numpy as np
-from scipy.linalg import eigh
+# from scipy.linalg import eigh
 
 from skimage.transform import resize
 
