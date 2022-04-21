@@ -48,9 +48,9 @@ def preprocess(array):
 
 def resizeArr(array):
     # array = array.astype("float32")
-    tmpArr = np.zeros([len(array), 112, 112])
+    tmpArr = np.zeros([len(array), 224, 224])
     for i in range(len(array)):
-        tmpArr[i] = (resize(array[i],(112, 112)))
+        tmpArr[i] = (resize(array[i],(224, 224)))
     
     return tmpArr
 
@@ -80,8 +80,8 @@ X_test_pca = pca.transform(X_test)
 # x_test = std_scaler.transform(X_test)
 
 
-# x_train = X_train_pca.reshape(X_train_pca.shape[0], 112, 112)
-# x_test = X_test_pca.reshape(X_test_pca.shape[0], 112, 112)
+# x_train = X_train_pca.reshape(X_train_pca.shape[0], 224, 224)
+# x_test = X_test_pca.reshape(X_test_pca.shape[0], 224, 224)
 x_train = resizeArr(X_train_pca)
 x_test = resizeArr(X_test_pca)
 
@@ -97,6 +97,14 @@ x_test = tf.cast(x_test, dtype=tf.float16)
 
 x_train = tf.image.grayscale_to_rgb(x_train)
 x_test = tf.image.grayscale_to_rgb(x_test)
+
+SAVE_PATH = "pca/" # Data saving folder
+
+pca_train_images = np.asarray(x_train)
+pca_test_images = np.asarray(x_test)
+
+np.save(SAVE_PATH + "pca_train_images.npy", pca_train_images)
+np.save(SAVE_PATH + "pca_test_images.npy", pca_test_images)
 
 x_val = x_train[-2000:,:,:,:]
 y_val = y_train[-2000:]
@@ -141,7 +149,7 @@ model.summary()
 
 model.compile(optimizer='adam', loss=losses.sparse_categorical_crossentropy, metrics=['accuracy'])
 
-history = model.fit(x_train, y_train, batch_size=64, epochs=7, validation_data=(x_val, y_val))
+history = model.fit(x_train, y_train, batch_size=64, epochs=3, validation_data=(x_val, y_val))
 
 fig, axs = plt.subplots(2, 1, figsize=(15,15))
 
@@ -160,5 +168,7 @@ axs[1].set_ylabel('Accuracy')
 axs[1].legend(['Train', 'Val'])
 
 plt.show()
+
+model.save_weights("keras_models/pca_model")
 
 model.evaluate(x_test, y_test)

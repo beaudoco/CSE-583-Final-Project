@@ -20,9 +20,12 @@ from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import LabelEncoder 
 from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import confusion_matrix
 from scipy.linalg import eigh
 
 from skimage.transform import resize
+
+from pprint import pprint
 
 def preprocess(array):
     """
@@ -39,9 +42,9 @@ def preprocess(array):
 
 def resizeArr(array):
     # array = array.astype("float32")
-    tmpArr = np.zeros([len(array), 112, 112, 3])
+    tmpArr = np.zeros([len(array), 224, 224, 3])
     for i in range(len(array)):
-        tmpArr[i] = (resize(array[i],(112, 112,3)))
+        tmpArr[i] = (resize(array[i],(224, 224,3)))
     
     return tmpArr
 
@@ -135,45 +138,17 @@ if PREPROCESS == True:
     np.save(SAVE_PATH + "q_train_images.npy", q_train_images)
     np.save(SAVE_PATH + "q_test_images.npy", q_test_images)
 
-
-# n_samples = 4
-# n_channels = 4
-# fig, axes = plt.subplots(1 + n_channels, n_samples, figsize=(10, 10))
-# for k in range(n_samples):
-#     axes[0, 0].set_ylabel("Input")
-#     if k != 0:
-#         axes[0, k].yaxis.set_visible(False)
-#     axes[0, k].imshow(x_train[k, :, :, 0], cmap="gray")
-
-#     # Plot all output channels
-#     for c in range(n_channels):
-#         axes[c + 1, 0].set_ylabel("Output [ch. {}]".format(c))
-#         if k != 0:
-#             axes[c, k].yaxis.set_visible(False)
-#         axes[c + 1, k].imshow(q_train_images[k, :, :, c], cmap="gray")
-
-# plt.tight_layout()
-# plt.show()
-
 # Load pre-processed images
 q_train_images = np.load(SAVE_PATH + "q_train_images.npy")
 q_test_images = np.load(SAVE_PATH + "q_test_images.npy")
-
-# print(q_test_images.shape)
-
-# quit()
 
 x_val = q_train_images[-2000:,:,:,:]
 y_val = y_train[-2000:]
 x_train = q_train_images[:-2000,:,:,:]
 y_train = y_train[:-2000]
 
-# print(x_train.shape)
-# quit()
-
 model = models.Sequential()
 model.add(layers.Input(shape=x_train.shape[1:]))
-
 
 model.add(layers.Conv2D(96, 11, strides=4, padding='same'))
 model.add(layers.Lambda(tf.nn.local_response_normalization))
@@ -206,7 +181,7 @@ model.summary()
 
 model.compile(optimizer='adam', loss=losses.sparse_categorical_crossentropy, metrics=['accuracy'])
 
-history = model.fit(x_train, y_train, batch_size=64, epochs=7, validation_data=(x_val, y_val))
+history = model.fit(x_train, y_train, batch_size=64, epochs=3, validation_data=(x_val, y_val))
 
 fig, axs = plt.subplots(2, 1, figsize=(15,15))
 
@@ -225,5 +200,7 @@ axs[1].set_ylabel('Accuracy')
 axs[1].legend(['Train', 'Val'])
 
 plt.show()
+
+model.save_weights("keras_models/quantum_model")
 
 model.evaluate(q_test_images, y_test)
