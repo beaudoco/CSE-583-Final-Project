@@ -33,34 +33,36 @@ def preprocess(array):
 
     return tmpArr
 
+PREPROCESS = False
+SAVE_PATH = "classical/" # Data saving folder
 (x_train, y_train), (x_test, y_test)=tf.keras.datasets.mnist.load_data()
-
-
 x_train = x_train[-20000:]
 y_train = y_train[-20000:]
 
 x_test = x_train[-2000:]
 y_test = y_train[-2000:]
 
-x_train = preprocess(x_train)
-x_test = preprocess(x_test)
+if PREPROCESS == True:    
+    x_train = preprocess(x_train)
+    x_test = preprocess(x_test)
 
-x_train = tf.expand_dims(x_train, axis=3, name=None)
-x_test = tf.expand_dims(x_test, axis=3, name=None)
+    x_train = tf.expand_dims(x_train, axis=3, name=None)
+    x_test = tf.expand_dims(x_test, axis=3, name=None)
 
-x_train = tf.cast(x_train, dtype=tf.float16)
-x_test = tf.cast(x_test, dtype=tf.float16)
+    x_train = tf.cast(x_train, dtype=tf.float16)
+    x_test = tf.cast(x_test, dtype=tf.float16)
 
-x_train = tf.image.grayscale_to_rgb(x_train)
-x_test = tf.image.grayscale_to_rgb(x_test)
+    x_train = tf.image.grayscale_to_rgb(x_train)
+    x_test = tf.image.grayscale_to_rgb(x_test)
 
-SAVE_PATH = "classical/" # Data saving folder
+    classical_train_images = np.asarray(x_train)
+    classical_test_images = np.asarray(x_test)
 
-classical_train_images = np.asarray(x_train)
-classical_test_images = np.asarray(x_test)
+    np.save(SAVE_PATH + "classical_train_images.npy", classical_train_images)
+    np.save(SAVE_PATH + "classical_test_images.npy", classical_test_images)
 
-np.save(SAVE_PATH + "classical_train_images.npy", classical_train_images)
-np.save(SAVE_PATH + "classical_test_images.npy", classical_test_images)
+x_train = np.load(SAVE_PATH + "classical_train_images.npy")
+x_test = np.load(SAVE_PATH + "classical_test_images.npy")
 
 x_val = x_train[-2000:,:,:,:]
 y_val = y_train[-2000:]

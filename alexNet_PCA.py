@@ -63,48 +63,46 @@ y_train = y_train[-20000:]
 x_test = x_train[-2000:]
 y_test = y_train[-2000:]
 
-x_train = preprocess(x_train)
-x_test = preprocess(x_test)
-
-X_train = x_train.reshape(-1, 784)
-X_test = x_test.reshape(-1, 784)
-
-pca = PCA(196)
-X_train_pca = pca.fit_transform(X_train)
-X_test_pca = pca.transform(X_test)
-
-# std_scaler = StandardScaler()
-# X_train_pca = std_scaler.fit_transform(X_train_pca)
-# X_test_pca = std_scaler.transform(X_test_pca)
-# x_train = std_scaler.fit_transform(X_train)
-# x_test = std_scaler.transform(X_test)
-
-
-# x_train = X_train_pca.reshape(X_train_pca.shape[0], 224, 224)
-# x_test = X_test_pca.reshape(X_test_pca.shape[0], 224, 224)
-x_train = resizeArr(X_train_pca)
-x_test = resizeArr(X_test_pca)
-
-
-# print(x_train.shape)
-# quit()
-
-x_train = tf.expand_dims(x_train, axis=3, name=None)
-x_test = tf.expand_dims(x_test, axis=3, name=None)
-
-x_train = tf.cast(x_train, dtype=tf.float16)
-x_test = tf.cast(x_test, dtype=tf.float16)
-
-x_train = tf.image.grayscale_to_rgb(x_train)
-x_test = tf.image.grayscale_to_rgb(x_test)
-
+PREPROCESS = False
 SAVE_PATH = "pca/" # Data saving folder
 
-pca_train_images = np.asarray(x_train)
-pca_test_images = np.asarray(x_test)
+if PREPROCESS == True:
+    x_train = preprocess(x_train)
+    x_test = preprocess(x_test)
 
-np.save(SAVE_PATH + "pca_train_images.npy", pca_train_images)
-np.save(SAVE_PATH + "pca_test_images.npy", pca_test_images)
+    X_train = x_train.reshape(-1, 784)
+    X_test = x_test.reshape(-1, 784)
+
+    pca = PCA(196)
+    X_train_pca = pca.fit_transform(X_train)
+    X_test_pca = pca.transform(X_test)
+
+    # std_scaler = StandardScaler()
+    # X_train_pca = std_scaler.fit_transform(X_train_pca)
+    # X_test_pca = std_scaler.transform(X_test_pca)
+    # x_train = std_scaler.fit_transform(X_train)
+    # x_test = std_scaler.transform(X_test)
+    
+    x_train = resizeArr(X_train_pca)
+    x_test = resizeArr(X_test_pca)
+
+    x_train = tf.expand_dims(x_train, axis=3, name=None)
+    x_test = tf.expand_dims(x_test, axis=3, name=None)
+
+    x_train = tf.cast(x_train, dtype=tf.float16)
+    x_test = tf.cast(x_test, dtype=tf.float16)
+
+    x_train = tf.image.grayscale_to_rgb(x_train)
+    x_test = tf.image.grayscale_to_rgb(x_test)
+
+    pca_train_images = np.asarray(x_train)
+    pca_test_images = np.asarray(x_test)
+
+    np.save(SAVE_PATH + "pca_train_images.npy", pca_train_images)
+    np.save(SAVE_PATH + "pca_test_images.npy", pca_test_images)
+
+x_train = np.load(SAVE_PATH + "pca_train_images.npy")
+x_test = np.load(SAVE_PATH + "pca_test_images.npy")
 
 x_val = x_train[-2000:,:,:,:]
 y_val = y_train[-2000:]
